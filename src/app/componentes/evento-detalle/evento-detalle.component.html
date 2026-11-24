@@ -1,0 +1,139 @@
+<main class="app-content">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <a routerLink="/app/eventos">Eventos</a><span>/</span><span>Detalle</span>
+  </nav>
+  @if (event(); as event) {
+    @if (created()) {
+      <p class="notice" role="status">
+        Evento guardado y visible en la lista de su grupo.
+      </p>
+    }
+    @if (notice()) {
+      <p role="status" class="notice">{{ notice() }}</p>
+    }
+    @if (error()) {
+      <p role="alert" class="notice notice-error">{{ error() }}</p>
+    }
+    <div class="event-detail-grid">
+      <section>
+        <img
+          class="event-cover"
+          [src]="event.image"
+          alt="Jornada de limpieza comunitaria"
+        />
+        <mat-card appearance="outlined" class="panel">
+          <h2>Acerca de esta jornada</h2>
+          <p class="event-description">{{ event.description }}</p>
+        </mat-card>
+      </section>
+      <mat-card appearance="outlined" class="panel event-information">
+        <span class="eyebrow">{{
+          isPast(event.endsAt) ? "Jornada finalizada" : "Próxima jornada"
+        }}</span>
+        <h1>{{ event.title }}</h1>
+        <a [routerLink]="['/app/grupos', event.groupId]" class="organizer"
+          >Organiza: {{ groupName(event.groupId) }}</a
+        >
+        <dl>
+          <dt>Fecha</dt>
+          <dd>{{ event.startsAt | date: "dd/MM/yyyy" }}</dd>
+          <dt>Hora de inicio</dt>
+          <dd>{{ event.startTime || "Hora por confirmar" }}</dd>
+
+          <dt>Punto de encuentro</dt>
+          <dd>{{ event.address }} · {{ event.district }}</dd>
+          <dt>Participantes confirmados</dt>
+          <dd aria-live="polite">{{ event.totalAttendees }}</dd>
+        </dl>
+        @if (!isPast(event.endsAt)) {
+          <button
+            mat-flat-button
+            type="button"
+            class="btn btn-primary"
+            (click)="attend()"
+            [disabled]="
+              saving() || event.attendees.includes(store.profile().id)
+            "
+          >
+            {{
+              event.attendees.includes(store.profile().id)
+                ? "Inscripción confirmada"
+                : "Inscribirme"
+            }}
+          </button>
+        }
+      </mat-card>
+    </div>
+    @if (canManageAttendance() && isPast(event.endsAt)) {
+      <mat-card appearance="outlined" class="panel attendance-panel">
+        <div class="page-heading">
+          <div><h2>Validar asistencia</h2><p>Registra quién participó en esta jornada finalizada.</p></div>
+          <button mat-stroked-button type="button" (click)="loadParticipants()" [disabled]="participantsLoading() || savingAttendance() !== null">
+            {{ participantsLoading() ? "Cargando…" : "Consultar participantes" }}
+          </button>
+        </div>
+        @if (attendanceError()) { <p role="alert" class="notice notice-error">{{ attendanceError() }}</p> }
+        @if (attendanceNotice()) { <p role="status" class="notice">{{ attendanceNotice() }}</p> }
+        @if (participantsEventId() === event.id) {
+          @for (participant of participants(); track participant.usuarioId) {
+            <article class="attendance-row">
+              <div><strong>{{ participant.nombre }}</strong><p>{{ participant.asistio ? "Asistencia validada" : participant.fechaValidacion ? "No asistió" : "Pendiente de validación" }}</p></div>
+              <div class="actions">
+                <button mat-stroked-button type="button" (click)="validateAttendance(participant, true)" [disabled]="savingAttendance() !== null || participant.asistio">Marcar asistió</button>
+                <button mat-button type="button" (click)="validateAttendance(participant, false)" [disabled]="savingAttendance() !== null || (!participant.asistio && !!participant.fechaValidacion)">Marcar no asistió</button>
+              </div>
+            </article>
+          } @empty { <p>No hay inscripciones confirmadas para este evento.</p> }
+        }
+      </mat-card>
+    }
+    <mat-card
+      appearance="outlined"
+      class="panel event-gallery"
+      id="event-gallery"
+    >
+      <div class="page-heading">
+        <div>
+          <h2>Fotos de la jornada</h2>
+          <p>Comparte lo que logró la comunidad.</p>
+        </div>
+        @if (store.canUploadEventPhoto(event)) {
+          <label class="btn btn-outline photo-control"
+            ><i class="fa-solid fa-camera" aria-hidden="true"></i>Subir
+            fotografía<input
+              type="file"
+              accept="image/jpeg,image/png"
+              (change)="upload($event)"
+              aria-label="Subir fotografía de la jornada"
+          /></label>
+        }
+      </div>
+      <div class="gallery-grid">
+        @for (photo of event.photos; track photo.id) {
+          <figure>
+            <img [src]="photo.url" [alt]="photo.caption" />
+            <figcaption>{{ photo.caption }}</figcaption>
+          </figure>
+        } @empty {
+          <div class="empty-state full-width">
+            <i class="fa-solid fa-camera" aria-hidden="true"></i>
+            <p>Todavía no hay fotografías.</p>
+            <p>
+              Los miembros del grupo y participantes inscritos pueden compartir
+              fotografías, también después de finalizar la jornada.
+            </p>
+          </div>
+        }
+      </div>
+    </mat-card>
+  } @else {
+    <div class="empty-state">
+      <h1>{{ loadingEvent() ? "Cargando evento…" : "Evento no encontrado" }}</h1>
+      @if (loadingEvent()) { <p role="status">Consultando el evento.</p> }
+      @if (error()) { <p role="alert">{{ error() }}</p> }
+      <a mat-stroked-button routerLink="/app/eventos" class="btn btn-outline"
+        >Volver a eventos</a
+      >
+    </div>
+  }
+</main>

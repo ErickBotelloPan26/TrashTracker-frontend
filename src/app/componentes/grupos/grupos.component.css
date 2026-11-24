@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+.group-card {
+  background: white;
+  border: 1px solid #e0eddd;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.group-card > img {
+  height: 160px;
+  width: 100%;
+  object-fit: cover;
+}
+.group-card > div {
+  padding: 19px;
+}
+.group-card h2 {
+  font-size: 1.05rem;
+}
+.member-count {
+  font-size: 0.72rem;
+  color: #8b9d85;
+  margin-top: 5px;
+}
+.group-description {
+  font-size: 0.82rem;
+  color: #647d5e;
+  min-height: 75px;
+  margin: 14px 0 18px;
+}
+.group-card .actions {
+  justify-content: space-between;
+}
+.membership {
+  font-size: 0.72rem;
+  color: #309857;
+}
+.group-link {
+  font-size: 0.8rem;
+  color: #2ea660 !important;
+}
+.eyebrow {
+  font-size: 0.65rem;
+}

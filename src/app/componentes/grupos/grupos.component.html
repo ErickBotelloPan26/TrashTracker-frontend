@@ -1,0 +1,77 @@
+<main class="app-content">
+  <div class="page-heading">
+    <div>
+      <h1>Mis grupos comunitarios</h1>
+      <p>
+        Conecta con vecinos que comparten el compromiso de cuidar tu entorno.
+      </p>
+    </div>
+  </div>
+  @if (notice()) {
+    <p class="notice" role="status">{{ notice() }}</p>
+  }
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic"
+      ><mat-label>Buscar grupo</mat-label
+      ><input
+        matInput
+        id="group-query"
+        class="search-field"
+        placeholder="Nombre o actividad"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)" /></mat-form-field
+    ><mat-form-field appearance="outline" subscriptSizing="dynamic"
+      ><mat-label>Distrito</mat-label
+      ><mat-select
+        id="group-district"
+        [ngModel]="district()"
+        (ngModelChange)="district.set($event)"
+      >
+        <mat-option value="">Todos los distritos</mat-option>
+        @for (district of districts(); track district) {
+          <mat-option [value]="district">{{ district }}</mat-option>
+        }
+      </mat-select></mat-form-field
+    >
+  </div>
+  <div class="card-grid">
+    @for (group of filtered(); track group.id) {
+      <mat-card appearance="outlined" class="group-card">
+        <img
+          [src]="group.image"
+          [alt]="'Actividad comunitaria de ' + group.name"
+        />
+        <div>
+          <div class="eyebrow">
+            {{ group.district }}
+          </div>
+          <h2>{{ group.name }}</h2>
+          <p class="member-count">{{ group.totalMembers }} miembros</p>
+          <p class="group-description">{{ group.description }}</p>
+          <div class="actions">
+            @if (store.role(group.id)) {
+              <span class="membership"
+                ><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Ya
+                eres miembro</span
+              >
+            } @else {
+              <button
+                mat-flat-button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="join(group.id)"
+              >
+                Unirme al grupo
+              </button>
+            }
+            <a [routerLink]="['/app/grupos', group.id]" class="group-link"
+              >Ver grupo →</a
+            >
+          </div>
+        </div>
+      </mat-card>
+    } @empty {
+      <div class="empty-state full-width">No hay grupos con estos filtros.</div>
+    }
+  </div>
+</main>

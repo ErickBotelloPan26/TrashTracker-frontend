@@ -1,0 +1,90 @@
+<main class="app-content">
+  <nav class="breadcrumb">
+    <a routerLink="/app/eventos">Eventos</a><span>/</span
+    ><span>Crear evento</span>
+  </nav>
+  <div class="page-heading">
+    <div>
+      <h1>Crear evento de limpieza</h1>
+      <p>Organiza una jornada con tu grupo.</p>
+    </div>
+  </div>
+  @if (error()) {
+    <p class="notice notice-error" role="alert">{{ error() }}</p>
+  }
+  @if (groups().length) {
+    <form class="panel" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field full-width"
+          ><mat-label>Grupo organizador</mat-label
+          ><mat-select id="event-group" formControlName="groupId">
+            @for (group of groups(); track group.id) {
+              <mat-option [value]="group.id">{{ group.name }}</mat-option>
+            }
+          </mat-select></mat-form-field
+        >
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field"
+          ><mat-label>Fecha</mat-label
+          ><input
+            matInput
+            id="event-date"
+            [matDatepicker]="eventDate"
+            formControlName="date"
+            [min]="minDate"
+            required /><mat-datepicker-toggle
+            matIconSuffix
+            [for]="eventDate"
+          ></mat-datepicker-toggle
+          ><mat-datepicker #eventDate></mat-datepicker
+        ></mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="app-field">
+          <mat-label>Hora de inicio</mat-label>
+          <input matInput id="event-time" type="time" formControlName="time" step="60" required />
+          @if (form.get('time')?.touched && form.get('time')?.invalid) {
+            <mat-error>Indica una hora válida.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field full-width"
+          ><mat-label>Punto de encuentro</mat-label
+          ><input
+            matInput
+            id="event-address"
+            formControlName="address"
+            required
+        /></mat-form-field>
+      </div>
+      @if (form.touched && form.invalid) {
+        <p class="field-error">Completa todos los campos.</p>
+      }
+      <div class="actions form-actions">
+        <a mat-button routerLink="/app/eventos" class="btn btn-subtle"
+          >Cancelar</a
+        ><button
+          mat-flat-button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="busy()"
+        >
+          {{ busy() ? "Guardando…" : "Publicar evento" }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <section class="empty-state">
+      <h2>No tienes permisos para organizar eventos</h2>
+      <p>Necesitas ser organizador de un grupo.</p>
+      <a mat-stroked-button routerLink="/app/grupos" class="btn btn-outline"
+        >Ver grupos</a
+      >
+    </section>
+  }
+</main>
