@@ -1,0 +1,268 @@
+<app-encabezado></app-encabezado>
+<div class="auth-page">
+  <main class="auth-layout">
+    <section
+      class="auth-visual"
+      [class.auth-login]="mode() === 'login'"
+      [class.auth-recovery]="mode() === 'recovery'"
+      aria-label="Comunidad TrashTracker"
+    >
+      <div>
+        <h2>Transforma tu comunidad,<br />protege tu entorno.</h2>
+        <p>
+          Únete a quienes reportan y colaboran por una Lima más limpia. Cada
+          acción cuenta.
+        </p>
+      </div>
+    </section>
+    <section class="auth-form-area">
+      <div
+        class="auth-card"
+        [class.auth-account-card]="mode() === 'login' || mode() === 'register'"
+      >
+        <img
+          class="auth-leaf"
+          src="assets/img/ui/App-Icon.png"
+          width="48"
+          height="48"
+          alt="TrashTracker"
+        />
+        @if (mode() === "recovery" && recoveryPreview()) {
+          <h1>
+            {{ resetDone() ? "Contraseña actualizada" : "Revisa tu correo" }}
+          </h1>
+          <p class="subtitle">{{ notice() }}</p>
+          <div class="recovery-icon">
+            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+          </div>
+          <button
+            mat-flat-button
+            type="button"
+            class="auth-submit"
+            (click)="
+              resetDone()
+                ? router.navigateByUrl('/login')
+                : recoveryPreview.set(false)
+            "
+          >
+            {{ resetDone() ? "Iniciar sesión" : "Volver a ingresar correo" }}
+          </button>
+        } @else {
+          <h1>
+            {{
+              mode() === "login"
+                ? "Iniciar sesión"
+                : resetToken()
+                  ? "Restablecer contraseña"
+                  : mode() === "register"
+                    ? "Crea tu cuenta"
+                    : "Recuperar contraseña"
+            }}
+          </h1>
+          <p class="subtitle">{{ subtitle }}</p>
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            @if (mode() === "register") {
+              <mat-form-field
+                appearance="outline"
+                subscriptSizing="dynamic"
+                class="auth-field"
+                ><mat-label>Nombre de usuario</mat-label
+                ><input
+                  matInput
+                  id="name"
+                  type="text"
+                  formControlName="name"
+                  autocomplete="username"
+                  placeholder="Tu nombre o apodo"
+                  required
+                  [attr.aria-invalid]="invalid('name')"
+                />
+                @if (invalid("name")) {
+                  <mat-error>Ingresa un nombre de usuario.</mat-error>
+                }
+              </mat-form-field>
+            }
+            @if (!resetToken()) {
+              <mat-form-field
+                appearance="outline"
+                subscriptSizing="dynamic"
+                class="auth-field"
+                ><mat-label>Correo electrónico</mat-label
+                ><input
+                  matInput
+                  id="email"
+                  [errorStateMatcher]="emailErrorMatcher"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  placeholder="ejemplo@correo.com"
+                  required
+                  [attr.aria-invalid]="invalid('email') || duplicateEmail()"
+                />
+                @if (invalid("email")) {
+                  <mat-error>Ingresa un correo electrónico válido.</mat-error>
+                }
+                @if (duplicateEmail()) {
+                  <mat-error>El correo ya está registrado.</mat-error>
+                }
+              </mat-form-field>
+            }
+            @if (mode() !== "recovery" || resetToken()) {
+              <mat-form-field
+                class="auth-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
+                <mat-label>Contraseña</mat-label>
+                <input
+                  matInput
+                  id="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="password"
+                  [autocomplete]="
+                    mode() === 'register' || resetToken()
+                      ? 'new-password'
+                      : 'current-password'
+                  "
+                  required
+                  placeholder="Tu contraseña"
+                />
+                <button
+                  mat-icon-button
+                  matIconSuffix
+                  class="auth-password-toggle"
+                  type="button"
+                  (click)="showPassword.set(!showPassword())"
+                  [attr.aria-label]="
+                    showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                  "
+                  [attr.aria-pressed]="showPassword()"
+                >
+                  <i
+                    [class]="
+                      showPassword()
+                        ? 'fa-regular fa-eye'
+                        : 'fa-regular fa-eye-slash'
+                    "
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                @if (mode() === "register" || resetToken()) {
+                  <mat-hint>{{
+                    resetToken()
+                      ? "Mínimo 12 caracteres y máximo 72 bytes UTF-8."
+                      : "Mínimo 8 caracteres."
+                  }}</mat-hint>
+                }
+                @if (invalid("password")) {
+                  <mat-error>{{
+                    mode() === "register" || resetToken()
+                      ? "Usa una contraseña con los requisitos indicados."
+                      : "Ingresa tu contraseña."
+                  }}</mat-error>
+                }
+              </mat-form-field>
+              @if (mode() === "login") {
+                <a
+                  class="password-recovery-link"
+                  routerLink="/recuperar-contrasena"
+                  >¿Olvidé mi contraseña?</a
+                >
+              }
+            }
+            @if (mode() === "register" || resetToken()) {
+              <mat-form-field
+                class="auth-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
+                <mat-label>Confirmar contraseña</mat-label>
+                <input
+                  matInput
+                  id="confirm"
+                  [type]="showConfirm() ? 'text' : 'password'"
+                  formControlName="confirm"
+                  [errorStateMatcher]="confirmErrorMatcher"
+                  autocomplete="new-password"
+                  required
+                  placeholder="Repite tu contraseña"
+                />
+                <button
+                  mat-icon-button
+                  matIconSuffix
+                  class="auth-password-toggle"
+                  type="button"
+                  (click)="showConfirm.set(!showConfirm())"
+                  [attr.aria-label]="
+                    showConfirm()
+                      ? 'Ocultar confirmación'
+                      : 'Mostrar confirmación'
+                  "
+                  [attr.aria-pressed]="showConfirm()"
+                >
+                  <i
+                    [class]="
+                      showConfirm()
+                        ? 'fa-regular fa-eye'
+                        : 'fa-regular fa-eye-slash'
+                    "
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                @if (
+                  form.controls["confirm"].touched &&
+                  (form.hasError("passwordMismatch") || invalid("confirm"))
+                ) {
+                  <mat-error>Las contraseñas deben coincidir.</mat-error>
+                }
+              </mat-form-field>
+            }
+            @if (mode() === "login") {
+              <mat-checkbox class="auth-remember" formControlName="remember"
+                >Recordarme</mat-checkbox
+              >
+            }
+            <button
+              mat-flat-button
+              type="submit"
+              class="auth-submit"
+              [disabled]="busy()"
+            >
+              {{
+                mode() === "login"
+                  ? "Iniciar sesión"
+                  : mode() === "register"
+                    ? "Crear cuenta"
+                    : "Continuar"
+              }}
+            </button>
+          </form>
+          @if (notice()) {
+            <p class="auth-notice" role="status">{{ notice() }}</p>
+          }
+
+          @if (mode() !== "recovery") {
+            <p class="auth-bottom">
+              @if (mode() === "login") {
+                ¿No tienes una cuenta?
+                <a routerLink="/registro">Crear cuenta</a>
+              } @else {
+                <a routerLink="/login">Volver al inicio de sesión</a>
+              }
+            </p>
+          }
+        }
+        @if (mode() === "recovery") {
+          <nav class="recovery-footer" aria-label="Opciones de acceso">
+            <a routerLink="/login" class="recovery-back"
+              ><span aria-hidden="true">←</span> Volver a iniciar sesión</a
+            >
+            <p>
+              ¿No tienes una cuenta? <a routerLink="/registro">Crear cuenta</a>
+            </p>
+          </nav>
+        }
+      </div>
+    </section>
+  </main>
+</div>
