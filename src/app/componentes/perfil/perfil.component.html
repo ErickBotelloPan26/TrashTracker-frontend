@@ -1,0 +1,135 @@
+<main class="app-content">
+  <div class="page-heading">
+    <div>
+      <h1>Mi perfil</h1>
+      <p>Actualiza tus datos personales.</p>
+    </div>
+  </div>
+  @if (notice()) {
+    <p class="notice" role="status">{{ notice() }}</p>
+  }
+  @if (error()) {
+    <p class="notice notice-error" role="alert">{{ error() }}</p>
+  }
+  <mat-card appearance="outlined" class="panel profile-summary">
+    @if (photoPreview() || store.profile().avatar; as avatar) {
+      <img class="profile-avatar" [src]="avatar" alt="Fotografía de tu perfil" />
+    } @else {
+      <span class="profile-avatar initials">{{ store.profile().name.slice(0, 1) }}</span>
+    }
+    <div>
+      <h2>{{ store.profile().name }}</h2>
+      @if (store.profile().nickname) { <p>{{ store.profile().nickname }}</p> }
+      <p>{{ store.profile().email }}</p>
+    </div>
+  </mat-card>
+  <section class="panel statistics-panel" aria-labelledby="statistics-title">
+    <div class="page-heading">
+      <h2 id="statistics-title">Mis estadísticas</h2>
+      <button mat-stroked-button type="button" (click)="loadStatistics()" [disabled]="loadingStatistics()">
+        {{ loadingStatistics() ? "Actualizando…" : "Actualizar estadísticas" }}
+      </button>
+    </div>
+    @if (loadingStatistics()) { <p role="status">Consultando tus estadísticas…</p> }
+    @if (statisticsError()) { <p role="alert" class="notice notice-error">{{ statisticsError() }}</p> }
+    @if (statistics(); as stats) {
+      <dl class="statistics-grid">
+        <div><dt>Reportes realizados</dt><dd>{{ stats.totalReportesRealizados }}</dd></div>
+        <div><dt>Eventos asistidos</dt><dd>{{ stats.totalEventosAsistidos }}</dd></div>
+        <div><dt>EcoPuntos disponibles</dt><dd>{{ store.balance() }}</dd></div>
+        <div><dt>Nivel</dt><dd>{{ store.level() }} <small>{{ store.levelName() }}</small></dd></div>
+      </dl>
+      <p class="muted">Los eventos asistidos incluyen únicamente jornadas finalizadas con presencia validada por su organizador o un administrador.</p>
+    }
+  </section>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <mat-card appearance="outlined" class="panel">
+      <h2>Datos personales</h2>
+      <label class="photo-label" for="profile-photo">Fotografía de perfil</label>
+      <input id="profile-photo" type="file" accept="image/jpeg,image/png" (change)="selectPhoto($event)" [disabled]="busy()" aria-describedby="photo-help" />
+      <p id="photo-help" class="image-help">JPG o PNG, máximo 10 MB. La fotografía se guarda al pulsar Guardar cambios.</p>
+      @if (selectedPhoto(); as photo) {
+        <p role="status" class="selected-photo">{{ photo.name }}</p>
+        <button mat-button type="button" (click)="clearPhoto()" [disabled]="busy()">Descartar fotografía seleccionada</button>
+      }
+      <div class="form-grid profile-fields">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="app-field">
+          <mat-label>Apodo</mat-label>
+          <input matInput id="profile-nickname" formControlName="nickname" maxlength="40" />
+          <mat-hint>Opcional, hasta 40 caracteres.</mat-hint>
+        </mat-form-field>
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field"
+          ><mat-label>Nombre completo</mat-label
+          ><input
+            matInput
+            id="profile-name"
+            formControlName="name"
+            required
+            maxlength="80"
+        /></mat-form-field>
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field"
+          ><mat-label>Idioma preferido</mat-label
+          ><mat-select id="profile-language" formControlName="language">
+            <mat-option value="es">Español</mat-option>
+            <mat-option value="en">Inglés</mat-option>
+          </mat-select></mat-form-field
+        >
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="app-field"
+          ><mat-label>Correo electrónico</mat-label
+          ><input
+            matInput
+            id="profile-email"
+            type="email"
+            [value]="store.profile().email"
+            readonly
+        /></mat-form-field>
+      </div>
+      @if (form.touched && form.invalid) {
+        <p class="field-error">Revisa el nombre y el apodo (máximo 40 caracteres).</p>
+      }
+      <div class="actions profile-actions">
+        <button
+          mat-button
+          class="btn btn-subtle"
+          type="button"
+          (click)="reset()"
+          [disabled]="busy()"
+        >
+          Restablecer</button
+        ><button
+          mat-flat-button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="busy()"
+        >
+          Guardar cambios
+        </button>
+      </div>
+    </mat-card>
+  </form>
+  <mat-card appearance="outlined" class="panel danger-zone">
+    <div>
+      <h2>Eliminar cuenta</h2>
+      <p class="muted">
+        Se eliminará tu cuenta del servidor. Esta acción es permanente.
+      </p>
+    </div>
+    <button
+      mat-stroked-button
+      type="button"
+      class="btn btn-outline"
+      (click)="requestAccountDeletion()"
+    >
+      Eliminar cuenta
+    </button>
+  </mat-card>
+</main>
