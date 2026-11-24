@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p>{{ data.message }}</p>
+  @if (data.requiredText) {
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Escribe {{ data.requiredText }} para confirmar</mat-label>
+      <input
+        matInput
+        [ngModel]="text()"
+        (ngModelChange)="text.set($event)"
+        autocomplete="off"
+      />
+    </mat-form-field>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-stroked-button
+    type="button"
+    [mat-dialog-close]="false"
+    cdkFocusInitial
+  >
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    type="button"
+    [class.btn-danger]="data.danger"
+    [disabled]="!!data.requiredText && text() !== data.requiredText"
+    [mat-dialog-close]="true"
+  >
+    {{ data.confirmLabel }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,78 @@
+<mat-toolbar class="main-header">
+  <div class="main-header__logo">
+    <a
+      class="main-header__brand"
+      (click)="closeMenu()"
+      routerLink="/"
+      fragment="hero"
+      aria-label="TrashTracker, inicio"
+    >
+      <img src="assets/img/ui/Logo-Icon.png" width="32" height="32" alt="" />
+      <strong>TrashTracker</strong>
+    </a>
+  </div>
+
+  <button
+    mat-icon-button
+    class="main-header__toggle"
+    [class.is-active]="menuOpen()"
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="main-navigation account-navigation"
+    [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+  >
+    <span class="main-header__toggle-bar"></span>
+    <span class="main-header__toggle-bar"></span>
+    <span class="main-header__toggle-bar"></span>
+  </button>
+
+  <nav
+    id="main-navigation"
+    class="main-header__nav main-header__menu"
+    [class.is-active]="menuOpen()"
+  >
+    <ul>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="hero">Inicio</a>
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="problem">Problema</a>
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="how-it-works"
+          >Funcionamiento</a
+        >
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="rewards"
+          >Recompensas</a
+        >
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="impact-map">Mapa</a>
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/" fragment="faq">Preguntas</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div
+    id="account-navigation"
+    class="main-header__actions main-header__menu"
+    [class.is-active]="menuOpen()"
+  >
+    <ul>
+      <li>
+        <a (click)="closeMenu()" routerLink="/login" class="login"
+          >Iniciar Sesión</a
+        >
+      </li>
+      <li>
+        <a (click)="closeMenu()" routerLink="/registro" class="sign-in"
+          >Registrarse Gratis</a
+        >
+      </li>
+    </ul>
+  </div>
+</mat-toolbar>
