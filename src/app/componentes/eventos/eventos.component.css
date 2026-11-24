@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.event-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  background: white;
+  border: 1px solid #dfeada;
+  border-radius: 12px;
+  padding: 17px;
+}
+.event-card > img {
+  width: 190px;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 9px;
+}
+.event-card > div:nth-child(2) {
+  flex: 1;
+}
+.event-card h2 {
+  font-size: 1rem;
+}
+.event-group {
+  font-size: 0.72rem;
+  color: #3bb274 !important;
+}
+.event-meta {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: #718767;
+  margin: 9px 0;
+}
+.event-meta i {
+  margin-right: 6px;
+}
+.event-card p.muted {
+  font-size: 0.7rem;
+}
+.event-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  min-width: 180px;
+}
+.more-link {
+  font-size: 0.75rem;
+  color: #6d8563 !important;
+}
+@media (max-width: 750px) {
+  .event-card {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .event-card > img {
+    width: 130px;
+  }
+  .event-actions {
+    width: 100%;
+    align-items: stretch;
+  }
+  .event-actions .more-link {
+    text-align: center;
+  }
+}
+@media (max-width: 450px) {
+  .event-card > img {
+    width: 100%;
+    height: 150px;
+  }
+}

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+.form-actions {
+  justify-content: flex-end;
+}
+.panel {
+  max-width: 980px;
+}

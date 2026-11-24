@@ -1,0 +1,179 @@
+<main class="app-content">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <a routerLink="/app/grupos">Grupos comunitarios</a><span>/</span
+    ><span>Detalle del grupo</span>
+  </nav>
+  @if (group(); as group) {
+    <div class="group-banner">
+      <img [src]="group.image" alt="Jornada comunitaria" />
+      <div>
+        <div class="eyebrow">{{ group.district }}</div>
+        <h1>{{ group.name }}</h1>
+        <p>{{ group.description }}</p>
+        <div class="actions">
+          @if (store.role(group.id)) {
+            <span class="status status-resolved"
+              >Tu rol: {{ store.role(group.id) }}</span
+            >
+          } @else {
+            <button
+              mat-flat-button
+              type="button"
+              class="btn btn-primary"
+              (click)="join()"
+            >
+              Unirme al grupo
+            </button>
+          }
+          @if (store.canOrganize(group.id)) {
+            <a
+              mat-stroked-button
+              routerLink="/app/eventos/nuevo"
+              class="btn btn-outline"
+              >Crear evento</a
+            >
+          }
+        </div>
+      </div>
+    </div>
+    @if (notice()) {
+      <p class="notice" role="status">{{ notice() }}</p>
+    }
+
+    <mat-tab-group
+      [selectedIndex]="['general', 'chat', 'miembros'].indexOf(tab())"
+      (selectedIndexChange)="tab.set(['general', 'chat', 'miembros'][$event])"
+      aria-label="Secciones del grupo"
+      dynamicHeight
+      ><mat-tab label="Información y eventos"
+        ><ng-template matTabContent>
+          <mat-card appearance="outlined" id="panel-general" class="panel">
+            <h2>Eventos del grupo</h2>
+            @for (event of groupEvents(); track event.id) {
+              <a class="group-event" [routerLink]="['/app/eventos', event.id]"
+                ><span
+                  ><strong>{{ event.title }}</strong>
+                  <p>
+                    {{ event.startsAt | date: "dd/MM/yyyy" }} · {{ event.startTime || "Hora por confirmar" }} ·
+                    {{ event.address }}
+                  </p></span
+                ><span>Ver evento →</span></a
+              >
+            } @empty {
+              <p class="muted">Este grupo todavía no tiene eventos.</p>
+            }
+          </mat-card>
+        </ng-template></mat-tab
+      ><mat-tab label="Chat del grupo"
+        ><ng-template matTabContent>
+          <mat-card appearance="outlined" id="panel-chat" class="panel">
+            <h2>Chat de {{ group.name }}</h2>
+            @if (store.role(group.id)) {
+              <p class="muted" role="status">{{ chatLabel() }}</p>
+              <div
+                class="messages"
+                role="log"
+                aria-live="polite"
+                aria-label="Mensajes del grupo"
+              >
+                @for (message of group.messages; track message.id) {
+                  <article
+                    class="message"
+                    [class.own]="message.authorId === store.profile().id"
+                  >
+                    <strong>{{ message.author }}</strong>
+                    <p>{{ message.text }}</p>
+                    <time>{{ message.createdAt | date: "dd/MM HH:mm" }}</time>
+                  </article>
+                } @empty {
+                  <p class="muted">Inicia la conversación con tu grupo.</p>
+                }
+              </div>
+              <form class="message-form" (ngSubmit)="send()">
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="app-field"
+                  ><mat-label>Tu mensaje</mat-label
+                  ><textarea
+                    matInput
+                    id="group-message"
+                    name="message"
+                    maxlength="1000"
+                    [ngModel]="text()"
+                    (ngModelChange)="text.set($event)"
+                    placeholder="Escribe un mensaje…"
+                  ></textarea></mat-form-field
+                ><button
+                  mat-flat-button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="saving() || !text().trim()"
+                >
+                  Enviar mensaje
+                </button>
+              </form>
+            } @else {
+              <div class="empty-state">
+                <p>Únete al grupo para acceder a su chat.</p>
+                <button
+                  mat-flat-button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="join()"
+                >
+                  Unirme
+                </button>
+              </div>
+            }
+          </mat-card>
+        </ng-template></mat-tab
+      ><mat-tab label="Miembros y roles"
+        ><ng-template matTabContent>
+          <mat-card appearance="outlined" id="panel-miembros" class="panel">
+            <h2>Miembros y roles</h2>
+            <p class="muted role-note">
+              Los organizadores del grupo pueden asignar roles.
+            </p>
+            @for (member of group.members; track member.userId) {
+              <div class="member-row">
+                <span class="avatar">{{ member.name.slice(0, 1) }}</span
+                ><strong>{{ member.name }}</strong>
+                @if (
+                  store.canOrganize(group.id) && member.role !== "administrador"
+                ) {
+                  <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic"
+                    class="role-selector"
+                    ><mat-label>Rol</mat-label
+                    ><mat-select
+                      [id]="'role-' + member.userId"
+                      [value]="member.role"
+                      (selectionChange)="
+                        changeRole(member.userId, $event.value)
+                      "
+                    >
+                      <mat-option value="miembro">Miembro</mat-option>
+                      <mat-option value="moderador">Moderador</mat-option>
+                      <mat-option value="organizador">Organizador</mat-option>
+                    </mat-select></mat-form-field
+                  >
+                } @else {
+                  <span class="status">{{ member.role }}</span>
+                }
+              </div>
+            }
+          </mat-card>
+        </ng-template></mat-tab
+      ></mat-tab-group
+    >
+  } @else {
+    <div class="empty-state">
+      <h1>Grupo no encontrado</h1>
+      <a mat-stroked-button routerLink="/app/grupos" class="btn btn-outline"
+        >Volver a grupos</a
+      >
+    </div>
+  }
+</main>

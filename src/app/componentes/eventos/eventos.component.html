@@ -1,0 +1,92 @@
+<main class="app-content">
+  <div class="page-heading">
+    <div>
+      <h1>Eventos ambientales</h1>
+      <p>Forma parte de las jornadas comunitarias de limpieza.</p>
+    </div>
+    @if (canCreate()) {
+      <a mat-flat-button routerLink="/app/eventos/nuevo" class="btn btn-primary"
+        ><i class="fa-solid fa-plus" aria-hidden="true"></i>Crear evento</a
+      >
+    }
+  </div>
+  <mat-button-toggle-group
+    [value]="past()"
+    (change)="past.set($event.value)"
+    aria-label="Filtrar eventos"
+    class="category-filter"
+    ><mat-button-toggle [value]="false">Próximos</mat-button-toggle
+    ><mat-button-toggle [value]="true"
+      >Pasados</mat-button-toggle
+    ></mat-button-toggle-group
+  >
+  @if (notice()) {
+    <p role="status" class="notice">{{ notice() }}</p>
+  }
+  <section class="events-list" aria-label="Eventos de la comunidad">
+    @for (event of filtered(); track event.id) {
+      <mat-card appearance="outlined" class="event-card">
+        <img
+          [src]="event.image"
+          alt="Participación comunitaria en una jornada"
+        />
+        <div>
+          <h2>{{ event.title }}</h2>
+          <a
+            [routerLink]="['/app/grupos', event.groupId]"
+            class="event-group"
+            >{{ groupName(event.groupId) }}</a
+          >
+          <p class="event-meta">
+            <span
+              ><i class="fa-regular fa-calendar" aria-hidden="true"></i
+              >{{ event.startsAt | date: "dd/MM/yyyy" }} · {{ event.startTime || "Hora por confirmar" }}</span
+            ><span
+              ><i class="fa-solid fa-location-dot" aria-hidden="true"></i
+              >{{ event.address }}</span
+            >
+          </p>
+          <p class="muted">
+            {{ event.totalAttendees }} participante(s) confirmado(s)
+          </p>
+        </div>
+        <div class="event-actions">
+          @if (!past()) {
+            <button
+              mat-flat-button
+              type="button"
+              class="btn btn-primary btn-sm"
+              [disabled]="
+                saving() || event.attendees.includes(store.profile().id)
+              "
+              (click)="attend(event.id)"
+            >
+              {{
+                event.attendees.includes(store.profile().id)
+                  ? "Inscripción confirmada"
+                  : "Inscribirme"
+              }}
+            </button>
+          } @else if (store.canUploadEventPhoto(event)) {
+            <a
+              mat-stroked-button
+              [routerLink]="['/app/eventos', event.id]"
+              fragment="event-gallery"
+              class="btn btn-outline btn-sm"
+              ><i class="fa-solid fa-camera" aria-hidden="true"></i>Subir
+              fotos</a
+            >
+          }
+          <a [routerLink]="['/app/eventos', event.id]" class="more-link"
+            >Más información →</a
+          >
+        </div>
+      </mat-card>
+    } @empty {
+      <div class="empty-state">
+        <i class="fa-regular fa-calendar" aria-hidden="true"></i>No hay eventos
+        en esta categoría.
+      </div>
+    }
+  </section>
+</main>
