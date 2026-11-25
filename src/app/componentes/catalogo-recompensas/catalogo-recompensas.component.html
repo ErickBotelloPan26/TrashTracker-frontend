@@ -1,0 +1,144 @@
+<main class="app-content">
+  @if (store.pointsSyncError()) {
+    <p role="alert" class="notice notice-error">{{ store.pointsSyncError() }}</p>
+  }
+  <mat-card appearance="outlined" class="panel points-summary">
+    <div>
+      <span class="eyebrow">Mi cuenta de puntos</span>
+      <h1>{{ store.balance() }} EcoPuntos disponibles</h1>
+      <p>Gana 50 EcoPuntos por cada reporte que la administración marque como resuelto, una sola vez por reporte.</p>
+    </div>
+    <img
+      class="points-symbol"
+      src="assets/img/ui/App-Icon.png"
+      width="48"
+      height="48"
+      alt=""
+    />
+  </mat-card>
+  @if (notice()) {
+    <p role="status" class="notice">{{ notice() }}</p>
+  }
+  @if (error()) {
+    <p role="alert" class="notice notice-error">{{ error() }}</p>
+  }
+  <div class="page-heading">
+    <div>
+      <h2>Catálogo de recompensas</h2>
+      <p>Elige un beneficio y confirma el canje.</p>
+    </div>
+    <a
+      mat-stroked-button
+      routerLink="/app/logros"
+      class="btn btn-outline btn-sm"
+      >Ver mis logros</a
+    >
+  </div>
+  <div class="card-grid">
+    @for (reward of store.rewards(); track reward.id) {
+      <mat-card appearance="outlined" class="reward-card">
+        <div class="reward-visual" [class.bag]="reward.id === 'rw3'">
+          @if (reward.id === "rw3") {
+            <img
+              src="assets/img/ui/imgBolsa.png"
+              alt="Bolsa ecológica reutilizable"
+            />
+          } @else {
+            <i [class]="'fa-solid fa-' + reward.icon" aria-hidden="true"></i>
+          }
+        </div>
+        <div class="reward-info">
+          <div class="reward-heading">
+            <h3>{{ reward.name }}</h3>
+            <span>{{ reward.cost }} pts</span>
+          </div>
+          <p>{{ reward.description }}</p>
+          <small>{{ reward.stock }} disponibles</small
+          ><button
+            mat-flat-button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="
+              saving() || store.balance() < reward.cost || reward.stock < 1
+            "
+            (click)="requestRedemption(reward)"
+          >
+            {{
+              reward.stock < 1
+                ? "Agotado"
+                : store.balance() < reward.cost
+                  ? "Puntos insuficientes"
+                  : "Canjear recompensa"
+            }}
+          </button>
+        </div>
+      </mat-card>
+    }
+  </div>
+  <mat-card appearance="outlined" class="panel history-section">
+    <h2>Historial de canjes</h2>
+    <div class="table-wrap">
+      <table mat-table [dataSource]="store.redemptions()" class="app-table">
+        <ng-container matColumnDef="col0"
+          ><th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let redemption">
+            {{ redemption.createdAt | date: "dd/MM/yyyy HH:mm" }}
+          </td></ng-container
+        ><ng-container matColumnDef="col1"
+          ><th mat-header-cell *matHeaderCellDef>Recompensa canjeada</th>
+          <td mat-cell *matCellDef="let redemption">
+            {{ redemption.rewardName }}
+          </td></ng-container
+        ><ng-container matColumnDef="col2"
+          ><th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let redemption">
+            <span class="status status-resolved">{{ redemption.state }}</span>
+          </td></ng-container
+        >
+        <tr mat-header-row *matHeaderRowDef="['col0', 'col1', 'col2']"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['col0', 'col1', 'col2']"
+        ></tr>
+        <tr *matNoDataRow>
+          <td colspan="3" class="muted">Todavía no has realizado canjes.</td>
+        </tr>
+      </table>
+    </div>
+  </mat-card>
+  <mat-card appearance="outlined" class="panel">
+    <h2>Historial de EcoPuntos</h2>
+    <div class="table-wrap">
+      <table mat-table [dataSource]="store.points()" class="app-table">
+        <ng-container matColumnDef="col0"
+          ><th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let movement">
+            {{ movement.createdAt | date: "dd/MM/yyyy" }}
+          </td></ng-container
+        ><ng-container matColumnDef="col1"
+          ><th mat-header-cell *matHeaderCellDef>Acción</th>
+          <td mat-cell *matCellDef="let movement">
+            {{ movement.concept }}
+          </td></ng-container
+        ><ng-container matColumnDef="col2"
+          ><th mat-header-cell *matHeaderCellDef>Movimiento</th>
+          <td
+            mat-cell
+            *matCellDef="let movement"
+            [class.positive]="movement.points > 0"
+          >
+            {{ movement.points > 0 ? "+" : "" }}{{ movement.points }} pts
+          </td></ng-container
+        >
+        <tr mat-header-row *matHeaderRowDef="['col0', 'col1', 'col2']"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['col0', 'col1', 'col2']"
+        ></tr>
+        <tr *matNoDataRow>
+          <td colspan="3" class="muted">Todavía no hay movimientos.</td>
+        </tr>
+      </table>
+    </div>
+  </mat-card>
+</main>

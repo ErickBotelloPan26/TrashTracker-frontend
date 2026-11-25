@@ -1,0 +1,127 @@
+<div class="application-view" [class.dashboard-shell]="onDashboard">
+  <mat-toolbar class="workspace-header">
+    <a
+      routerLink="/app/inicio"
+      class="workspace-brand"
+      aria-label="TrashTracker inicio"
+      ><img
+        class="brand-symbol"
+        src="assets/img/ui/Logo-Icon.png"
+        width="32"
+        height="32"
+        alt=""
+      /><strong>TrashTracker</strong></a
+    >
+    <button
+      mat-stroked-button
+      class="mobile-menu btn btn-outline btn-sm"
+      type="button"
+      (click)="menuOpen.set(!menuOpen())"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="workspace-navigation"
+      aria-label="Abrir o cerrar navegación"
+    >
+      <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
+    <nav
+      id="workspace-navigation"
+      [class.open]="menuOpen()"
+      aria-label="Navegación de la aplicación"
+    >
+      @for (item of nav(); track item.label) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="current"
+          ariaCurrentWhenActive="page"
+          (click)="menuOpen.set(false)"
+          >{{ item.label }}</a
+        >
+      }
+    </nav>
+    <div class="workspace-account">
+      <button
+        mat-icon-button
+        class="notification-toggle"
+        type="button"
+        aria-label="Confirmaciones de reportes"
+        [matMenuTriggerFor]="notificationMenu"
+        (menuOpened)="toggleNotifications()"
+        (menuClosed)="notificationsOpen.set(false)"
+        [matBadge]="store.confirmations().length"
+        [matBadgeHidden]="!store.confirmations().length"
+        matBadgeSize="small"
+      >
+        <i class="fa-regular fa-bell" aria-hidden="true"></i>
+      </button>
+      <a routerLink="/app/perfil" class="profile-link">
+        @if (store.profile().avatar) {
+          <img
+            class="avatar"
+            [src]="store.profile().avatar"
+            alt="Foto de perfil"
+          />
+        } @else {
+          <span class="avatar">{{ store.profile().name.slice(0, 1) }}</span>
+        }
+        <span
+          ><strong>{{ store.profile().name }}</strong
+          ><small>Mi perfil</small></span
+        ></a
+      >
+      <button
+        mat-icon-button
+        class="logout-button"
+        type="button"
+        (click)="logout()"
+        aria-label="Cerrar sesión"
+      >
+        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+      </button>
+    </div>
+  </mat-toolbar>
+  <mat-menu
+    #notificationMenu="matMenu"
+    class="notification-panel"
+    aria-label="Tus notificaciones"
+  >
+    <h2>Notificaciones</h2>
+    @if (store.notificationsSyncError()) { <p role="alert">{{ store.notificationsSyncError() }}</p> }
+    @for (notice of store.confirmations(); track notice.id) {
+      <a
+        mat-menu-item
+        [routerLink]="
+          notice.reportId
+            ? ['/app/reportes', notice.reportId]
+            : notice.eventId ? ['/app/eventos', notice.eventId] : ['/app/eventos']
+        "
+        (click)="notificationsOpen.set(false)"
+        ><strong>Nueva notificación</strong>
+        <p>{{ notice.text }}</p>
+        <time>{{ notice.createdAt | date: "dd/MM/yyyy HH:mm" }}</time></a
+      >
+    } @empty {
+      <p class="muted">Todavía no tienes notificaciones.</p>
+    }
+  </mat-menu>
+  @if (store.loading()) {
+    <div class="loading-indicator" role="status">
+      <mat-spinner diameter="24" aria-label="Cargando datos"></mat-spinner
+      ><span>Actualizando datos…</span>
+    </div>
+  }
+  @if (store.error()) {
+    <div class="notice notice-error" role="alert">
+      {{ store.error() }}
+      <button
+        mat-stroked-button
+        class="btn btn-outline btn-sm"
+        type="button"
+        (click)="reload()"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+  <router-outlet />
+  <footer class="workspace-footer">TrashTracker · Cada reporte cuenta.</footer>
+</div>
