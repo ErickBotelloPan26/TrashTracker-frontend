@@ -1,0 +1,199 @@
+<main class="dashboard">
+  <div class="dashboard-heading">
+    <h1>¡Hola de nuevo, {{ store.profile().name.split(" ")[0] }}!</h1>
+    <p>
+      Tienes novedades y el estatus de tus reportes de comunidad ha avanzado.
+      ¡Sigue transformando tu barrio!
+    </p>
+  </div>
+  <section class="summary-grid" aria-label="Resumen de tu actividad">
+    <a class="summary-card" routerLink="/app/recompensas">
+      <span class="summary-icon eco"
+        ><i class="fa-solid fa-award" aria-hidden="true"></i
+      ></span>
+      <div>
+        <span class="summary-label">Mis puntos eco</span
+        ><strong>{{ number(store.balance()) }} XP</strong
+        ><small class="level-tag"
+          >{{ store.levelName() }} Lv {{ store.level() }}</small
+        >
+      </div>
+    </a>
+    <a class="summary-card" routerLink="/app/reportes">
+      <span class="summary-icon orange"
+        ><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i
+      ></span>
+      <div>
+        <span class="summary-label">Reportes activos</span
+        ><strong>{{ activeReports() }}</strong
+        ><small>{{ inProgress() }} en proceso</small>
+      </div>
+    </a>
+    <a
+      class="summary-card"
+      [routerLink]="
+        nextEvent() ? ['/app/eventos', nextEvent()!.id] : ['/app/eventos']
+      "
+    >
+      <span class="summary-icon blue"
+        ><i class="fa-regular fa-calendar" aria-hidden="true"></i
+      ></span>
+      <div>
+        <span class="summary-label">Próximo evento</span
+        ><strong>{{
+          nextEvent() ? eventWhen(nextEvent()!.startsAt) : "Sin eventos"
+        }}</strong
+        ><small>{{
+          nextEvent()?.address || "Explora las próximas jornadas"
+        }}</small>
+        @if (nextEvent()) {
+          <small>{{ nextEvent()!.startTime || "Hora por confirmar" }}</small>
+        }
+      </div>
+    </a>
+    <a
+      class="summary-card"
+      [routerLink]="
+        activeGroup() ? ['/app/grupos', activeGroup()!.id] : ['/app/grupos']
+      "
+    >
+      <span class="summary-icon purple"
+        ><i class="fa-solid fa-user-group" aria-hidden="true"></i
+      ></span>
+      <div>
+        <span class="summary-label">Grupo activo</span
+        ><strong>{{ activeGroup()?.name || "Sin grupo" }}</strong
+        ><small>{{
+          activeGroup()
+            ? (activeGroup()!.totalMembers ?? activeGroup()!.members.length) +
+              " miembros"
+            : "Encuentra tu comunidad"
+        }}</small>
+      </div>
+    </a>
+  </section>
+  <div class="dashboard-columns">
+    <mat-card
+      appearance="outlined"
+      class="dashboard-panel recent-panel"
+      aria-labelledby="recent-title"
+    >
+      <div class="section-heading">
+        <h2 id="recent-title">Mis Reportes Recientes</h2>
+        <a routerLink="/app/reportes"
+          >Ver todos ({{ store.myReports().length }})</a
+        >
+      </div>
+      <div class="recent-reports">
+        @for (report of recent(); track report.id) {
+          <a class="report-row" [routerLink]="['/app/reportes', report.id]">
+            @if (report.photo && !failedPhotos().has(report.id)) {
+              <img
+                class="report-photo"
+                [src]="report.photo"
+                alt=""
+                loading="lazy"
+                (error)="photoFailed(report.id)"
+              />
+            } @else {
+              <span class="report-photo photo-placeholder"
+                ><i class="fa-regular fa-image" aria-hidden="true"></i
+              ></span>
+            }
+            <div class="report-copy">
+              <div class="report-meta">
+                <span [class]="'report-state ' + report.state">{{
+                  labels[report.state]
+                }}</span
+                ><time>{{ reportWhen(report.createdAt) }}</time>
+              </div>
+              <strong>{{ report.title }}</strong
+              ><small
+                ><i class="fa-solid fa-location-dot" aria-hidden="true"></i
+                >{{ report.district || report.address }}</small
+              >
+            </div>
+            <i
+              class="fa-solid fa-chevron-right report-arrow"
+              aria-hidden="true"
+            ></i>
+          </a>
+        } @empty {
+          <div class="dashboard-empty">
+            <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+            <p>Aún no tienes reportes.</p>
+            <a routerLink="/app/reportes/nuevo">Crea tu primer reporte →</a>
+          </div>
+        }
+      </div>
+    </mat-card>
+    <mat-card
+      appearance="outlined"
+      class="dashboard-panel shortcuts-panel"
+      aria-labelledby="shortcuts-title"
+    >
+      <h2 id="shortcuts-title">Accesos Rápidos</h2>
+      <div class="shortcut-grid">
+        @for (shortcut of shortcuts; track shortcut.path) {
+          <a class="shortcut" [routerLink]="shortcut.path"
+            ><i [class]="'fa-solid fa-' + shortcut.icon" aria-hidden="true"></i
+            ><strong>{{ shortcut.title }}</strong
+            ><span>{{ shortcut.text }}</span></a
+          >
+        }
+      </div>
+    </mat-card>
+  </div>
+  <mat-card
+    appearance="outlined"
+    class="dashboard-panel reward-progress"
+    aria-labelledby="reward-level-title"
+  >
+    <div class="progress-heading">
+      <div>
+        <h2 id="reward-level-title">Nivel de Recompensa</h2>
+        <p>
+          @if (!progress().target) {
+            ¡Alcanzaste el nivel máximo de
+            <strong>{{ store.levelName() }}</strong
+            >! Sigue cuidando tu comunidad.
+          } @else if (progress().remaining === 0) {
+            Has alcanzado los puntos necesarios para el siguiente nivel.
+          } @else {
+            Estás a solo
+            <strong>{{ number(progress().remaining) }} XP</strong> de alcanzar
+            el siguiente nivel. Sigue sumando acciones por tu comunidad.
+          }
+        </p>
+      </div>
+      <span class="progress-total"
+        >{{ number(store.balance())
+        }}{{
+          progress().target && progress().remaining > 0
+            ? " / " + number(progress().target)
+            : ""
+        }}
+        XP{{
+          progress().target && progress().remaining === 0
+            ? " · Meta alcanzada"
+            : ""
+        }}</span
+      >
+    </div>
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progress().percent"
+      class="progress-track"
+      aria-label="Progreso de puntos hacia el siguiente nivel"
+      [attr.aria-valuetext]="
+        progress().target
+          ? number(store.balance()) +
+            ' de ' +
+            number(progress().target) +
+            ' puntos'
+          : 'Nivel máximo'
+      "
+    >
+    </mat-progress-bar>
+  </mat-card>
+</main>
