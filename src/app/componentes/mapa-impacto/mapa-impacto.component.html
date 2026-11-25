@@ -1,0 +1,38 @@
+<section class="map-section" id="impact-map">
+  <div class="map-section__grid">
+    <article class="map-section__info">
+      <small>Visualiza el Problema</small>
+      <h2>Mapa interactivo de reportes ciudadanos</h2>
+      <p>
+        Explora en qué zonas se concentran los focos de basura y descubre dónde
+        la comunidad ya organizó limpiezas. Estos puntos son datos de
+        demostración; la conexión con reportes reales se incorporará en una
+        próxima entrega.
+      </p>
+      <ul class="map-legend">
+        <li>
+          <span class="map-legend__dot is-critical"></span>Zona crítica
+          reportada recientemente
+        </li>
+        <li>
+          <span class="map-legend__dot is-progress"></span>Reporte en proceso
+        </li>
+        <li>
+          <span class="map-legend__dot is-cleanup"></span>Limpieza comunitaria
+          resuelta
+        </li>
+      </ul>
+    </article>
+    <div class="map-section__map">
+      @if (mapError()) {
+        <p role="status">{{ mapError() }}</p>
+      }
+      <div
+        #mapContainer
+        id="report-map"
+        role="region"
+        aria-label="Mapa interactivo de focos de basura"
+      ></div>
+    </div>
+  </div>
+</section>

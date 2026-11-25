@@ -1,0 +1,110 @@
+<main class="map-page">
+  <aside class="map-sidebar">
+    <h1>Explorador de reportes</h1>
+    <p class="muted">Consulta los puntos de toda la comunidad.</p>
+    <form (ngSubmit)="search()" class="map-search">
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field"
+        ><mat-label>Buscar reporte</mat-label
+        ><input
+          matInput
+          id="map-query"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          name="query"
+          placeholder="Descripción o coordenadas" /></mat-form-field
+      ><button mat-stroked-button type="submit" class="btn btn-outline btn-sm">
+        Buscar
+      </button>
+    </form>
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="app-field"
+      ><mat-label>Tipo de residuo</mat-label
+      ><mat-select
+        id="map-waste"
+        [ngModel]="waste()"
+        (ngModelChange)="waste.set($event)"
+      >
+        <mat-option value="">Todos los residuos</mat-option>
+        @for (type of wasteTypes; track type) {
+          <mat-option [value]="type">{{ type }}</mat-option>
+        }
+      </mat-select></mat-form-field
+    >
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="app-field"
+      ><mat-label>Estado del reporte</mat-label
+      ><mat-select
+        id="map-state"
+        [ngModel]="state()"
+        (ngModelChange)="state.set($event)"
+      >
+        <mat-option value="">Todos los estados</mat-option>
+        <mat-option value="active">Activo</mat-option>
+        <mat-option value="progress">En proceso</mat-option>
+        <mat-option value="resolved">Resuelto</mat-option>
+      </mat-select></mat-form-field
+    >
+    <button
+      mat-stroked-button
+      type="button"
+      class="btn btn-outline location-button"
+      (click)="locate()"
+      [disabled]="locating()"
+    >
+      <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i
+      >{{ locating() ? "Buscando ubicación…" : "Mi ubicación" }}
+    </button>
+    @if (message()) {
+      <p class="map-feedback" role="status">{{ message() }}</p>
+    }
+    <div class="map-results" aria-live="polite">
+      <h2>{{ filtered().length }} reportes</h2>
+      @for (report of filtered(); track report.id) {
+        <article class="map-result">
+          <button
+            mat-button
+            type="button"
+            class="map-result-center"
+            (click)="center.set(report.coordinates)"
+            [attr.aria-label]="'Centrar mapa en ' + report.title"
+          >
+            <span class="map-result-content">
+              <span class="status" [class]="'status status-' + report.state">{{
+                labels[report.state]
+              }}</span>
+              <strong>{{ report.title }}</strong>
+              <span>{{ report.waste }} · {{ report.createdAt | date: "dd/MM" }}</span>
+            </span>
+          </button>
+          <a [routerLink]="['/app/reportes', report.id]">Ver detalle →</a>
+        </article>
+      } @empty {
+        <p class="muted">No hay reportes con estos filtros.</p>
+      }
+    </div>
+    <div class="map-legend-app" aria-label="Leyenda de estados">
+      <span><i class="dot active"></i>Activo</span
+      ><span><i class="dot progress"></i>En proceso</span
+      ><span><i class="dot resolved"></i>Resuelto</span>
+    </div>
+  </aside>
+  <section class="map-canvas" aria-label="Mapa de la comunidad">
+    <app-mapa-reporte
+      [reports]="filtered()"
+      [center]="center()"
+      (selected)="open($event)"
+    /><a
+      mat-flat-button
+      routerLink="/app/reportes/nuevo"
+      class="btn btn-primary map-create"
+      ><i class="fa-solid fa-plus" aria-hidden="true"></i>Crear reporte</a
+    >
+  </section>
+</main>

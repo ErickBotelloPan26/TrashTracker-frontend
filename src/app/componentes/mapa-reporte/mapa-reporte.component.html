@@ -1,0 +1,13 @@
+<div
+  #mapContainer
+  class="leaflet-host"
+  role="region"
+  [attr.aria-label]="
+    pickable()
+      ? 'Selecciona la ubicación del reporte en el mapa'
+      : 'Mapa de reportes ambientales'
+  "
+></div>
+@if (error()) {
+  <p class="map-error" role="status">{{ error() }}</p>
+}
