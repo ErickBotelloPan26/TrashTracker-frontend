@@ -1,0 +1,238 @@
+:host {
+  display: block;
+}
+.dashboard-shell {
+  background: #fff;
+}
+.workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: var(--header-height);
+  height: var(--header-height);
+  width: 100%;
+  padding: 6px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 2100;
+  background: var(--header-background);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(14, 40, 11, 0.08);
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.workspace-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  color: var(--eco-dark);
+  font-size: 1.15rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.brand-symbol {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 40px;
+}
+nav a {
+  padding: 12px 0;
+  color: var(--eco-text);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 300ms ease;
+}
+nav a:hover,
+nav a.current {
+  color: var(--eco-accent);
+}
+.workspace-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px;
+  border: 1px solid rgba(14, 40, 11, 0.08);
+  border-radius: 30px;
+  background: var(--eco-light);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+  transition:
+    color 300ms ease,
+    box-shadow 300ms ease;
+}
+.profile-link strong {
+  display: block;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-link:hover {
+  color: var(--eco-accent);
+  box-shadow: var(--shadow-md);
+}
+.profile-link small {
+  display: block;
+  margin: 0;
+  color: #70836b;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.notification-toggle,
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(14, 40, 11, 0.08);
+  border-radius: 50%;
+  background: var(--eco-light);
+  color: var(--eco-dark);
+  font-size: 1rem;
+  transition:
+    color 300ms ease,
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.notification-toggle:hover,
+.logout-button:hover {
+  color: var(--eco-accent);
+  background: white;
+  box-shadow: var(--shadow-md);
+}
+.workspace-footer {
+  max-width: 1180px;
+  margin: auto;
+  padding: 20px 30px;
+  border-top: 1px solid #dcead9;
+  font-size: 0.75rem;
+  color: #768c73;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.mobile-menu {
+  display: none;
+}
+@media (max-width: 1400px) {
+  nav {
+    gap: 20px;
+  }
+  .workspace-header {
+    gap: 20px;
+  }
+}
+@media (max-width: 1200px) {
+  .workspace-header {
+    gap: 14px;
+  }
+  nav {
+    gap: 18px;
+  }
+  .profile-link > span:last-child {
+    display: none;
+  }
+  .profile-link {
+    padding: 4px;
+  }
+}
+@media (max-width: 1050px) {
+  .workspace-header {
+    flex-wrap: nowrap;
+    padding: 6px 15px;
+  }
+  .workspace-brand {
+    flex: 1;
+  }
+  .mobile-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--eco-text);
+    font-size: 1.25rem;
+  }
+  nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    padding: 15px;
+    background: var(--header-background);
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    box-shadow: 0 8px 18px #19331914;
+    border-top: 1px solid rgba(14, 40, 11, 0.08);
+  }
+  nav.open {
+    display: flex;
+  }
+  nav a {
+    padding: 8px 12px;
+  }
+  .workspace-account {
+    gap: 6px;
+  }
+  .workspace-footer {
+    flex-direction: column;
+  }
+}
+@media (max-width: 400px) {
+  .workspace-header {
+    gap: 8px;
+  }
+  .notification-toggle,
+  .logout-button {
+    width: 36px;
+    height: 36px;
+  }
+  .profile-link .avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .profile-link {
+    padding: 2px;
+  }
+  .workspace-account {
+    gap: 4px;
+  }
+  .mobile-menu {
+    width: 30px;
+  }
+}
