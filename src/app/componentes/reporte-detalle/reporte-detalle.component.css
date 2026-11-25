@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+.detail-columns {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.evidence-image {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.evidence-panel > p {
+  font-size: 0.75rem;
+  margin-top: 10px;
+}
+.report-information h1 {
+  font-size: 1.65rem;
+  margin: 14px 0;
+}
+.report-information .status {
+  float: right;
+}
+.report-description {
+  margin: 20px 0;
+  color: #567153;
+}
+.report-information dt {
+  font-size: 0.75rem;
+  color: #7b8e77;
+  margin-top: 18px;
+}
+.report-information dd {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.report-information > p.muted {
+  font-size: 0.75rem;
+  margin-top: 22px;
+}
+.report-information .actions {
+  margin-top: 26px;
+}
+.detail-map h2 {
+  margin-bottom: 16px;
+}
+.detail-map app-mapa-reporte {
+  height: 270px;
+}
+@media (max-width: 750px) {
+  .detail-columns {
+    grid-template-columns: 1fr;
+  }
+}
