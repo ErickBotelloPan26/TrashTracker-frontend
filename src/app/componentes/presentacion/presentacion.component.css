@@ -1,0 +1,105 @@
+:host {
+  display: block;
+}
+
+.hero-section {
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  background-image:
+    linear-gradient(to right, #f4fbf2a1, rgba(255, 255, 255, 0)),
+    url(/assets/img/ui/imgSection.jpg);
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  padding: clamp(80px, 15vw, 160px) var(--section-inline-padding);
+}
+
+.hero-section__content {
+  max-width: 55%;
+}
+
+.hero-section__content h1 {
+  color: var(--eco-dark);
+}
+
+.hero-section__content h1 span {
+  color: var(--eco-accent);
+}
+
+.hero-section__content p {
+  font-size: 1.1rem;
+  max-width: 500px;
+}
+
+.hero-section__content .hero-section__actions ul {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+  gap: 20px;
+}
+
+.hero-section__content .hero-section__actions ul li a {
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 30px;
+  transition-duration: 300ms;
+  font-weight: 700;
+}
+
+.hero-section__content .hero-section__actions ul li .register {
+  background-color: var(--eco-accent);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.hero-section__content .hero-section__actions ul li .register:hover {
+  background-color: var(--eco-accent);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(63, 184, 114, 0.3);
+}
+
+.hero-section__content .hero-section__actions ul li .function {
+  border: 2px solid var(--eco-dark);
+  color: var(--eco-dark);
+  background-color: transparent;
+}
+
+.hero-section__content .hero-section__actions ul li .function:hover {
+  background-color: var(--eco-dark);
+  color: var(--white);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .hero-section__content {
+    max-width: 100%;
+  }
+
+  .hero-section__content .hero-section__actions ul {
+    justify-content: center;
+    flex-wrap: wrap; /* Para que los botones se apilen */
+  }
+}
+
+.hero-section__content .hero-section__actions ul li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--pill-button-height);
+  padding: var(--pill-button-padding);
+  font-size: var(--pill-button-font-size);
+  line-height: 1.5;
+  text-align: center;
+}

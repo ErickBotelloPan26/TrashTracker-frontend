@@ -1,0 +1,147 @@
+<main class="app-content">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <a routerLink="/app/reportes">Mis reportes</a><span>/</span
+    ><span>Crear reporte</span>
+  </nav>
+  <div class="page-heading">
+    <div>
+      <h1>Reportar incidencia ambiental</h1>
+      <p>
+        Comparte la evidencia y la ubicación del punto que necesita atención.
+      </p>
+    </div>
+  </div>
+  @if (error()) {
+    <p class="notice notice-error" role="alert">{{ error() }}</p>
+  }
+  <form class="panel" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-grid">
+      <div>
+        <label for="report-photo" class="upload-label"
+          >Evidencia fotográfica *</label
+        ><label class="photo-upload" for="report-photo">
+          @if (photo()) {
+            <img
+              [src]="photo()"
+              alt="Vista previa de la evidencia seleccionada"
+            />
+          } @else {
+            <i class="fa-solid fa-camera" aria-hidden="true"></i
+            ><strong>Haz clic para subir una foto</strong
+            ><span>JPG o PNG · máximo 10 MB</span>
+          }
+          <input
+            id="report-photo"
+            type="file"
+            accept="image/jpeg,image/png"
+            capture="environment"
+            (change)="upload($event)"
+        /></label>
+      </div>
+      <div class="location-picker">
+        <h2>Ubicación del problema</h2>
+        <div class="picker-map">
+          <app-mapa-reporte
+            [center]="center()"
+            [pickable]="true"
+            [pickedLocation]="coordinates()"
+            (picked)="pick($event)"
+          />
+        </div>
+        <button
+          mat-stroked-button
+          type="button"
+          class="btn btn-outline btn-sm"
+          (click)="locate()"
+          [disabled]="locating()"
+        >
+          <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i
+          >{{ locating() ? "Obteniendo ubicación…" : "Usar mi ubicación" }}
+        </button>
+        <p class="muted">
+          También puedes pulsar en el mapa o escribir las coordenadas.
+        </p>
+      </div>
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field"
+        ><mat-label>Tipo de residuo *</mat-label
+        ><mat-select id="report-waste" formControlName="waste">
+          @for (type of store.wasteTypes(); track type.idTipoResiduo) {
+            <mat-option [value]="type.idTipoResiduo">{{
+              type.nombre
+            }}</mat-option>
+          }
+        </mat-select></mat-form-field
+      >
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field"
+        ><mat-label>Latitud *</mat-label
+        ><input
+          matInput
+          id="report-lat"
+          type="number"
+          step="any"
+          formControlName="latitude"
+          [attr.aria-invalid]="invalid('latitude')"
+        />
+        @if (invalid("latitude")) {
+          <mat-error>Usa un valor entre -90 y 90.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field"
+        ><mat-label>Longitud *</mat-label
+        ><input
+          matInput
+          id="report-lng"
+          type="number"
+          step="any"
+          formControlName="longitude"
+          [attr.aria-invalid]="invalid('longitude')"
+        />
+        @if (invalid("longitude")) {
+          <mat-error>Usa un valor entre -180 y 180.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field full-width"
+        ><mat-label>Descripción del problema *</mat-label
+        ><textarea
+          matInput
+          id="report-description"
+          formControlName="description"
+          maxlength="1000"
+          placeholder="Describe qué observas y cómo afecta al entorno."
+          [attr.aria-invalid]="invalid('description')"
+        ></textarea>
+        @if (invalid("description")) {
+          <mat-error>Describe el problema en hasta 1,000 caracteres.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <p class="muted timestamp-note">
+      <i class="fa-regular fa-clock" aria-hidden="true"></i>La fecha y hora del
+      reporte se asignan en el servidor.
+    </p>
+    <div class="actions form-actions">
+      <a mat-button routerLink="/app/reportes" class="btn btn-subtle"
+        >Cancelar</a
+      ><button
+        mat-flat-button
+        class="btn btn-primary"
+        type="submit"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? "Agregando…" : "Guardar reporte" }}
+      </button>
+    </div>
+  </form>
+</main>

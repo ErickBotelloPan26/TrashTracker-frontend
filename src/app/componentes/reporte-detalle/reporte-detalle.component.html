@@ -1,0 +1,94 @@
+<main class="app-content">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <a
+      [routerLink]="
+        administration() ? '/app/administracion/reportes' : '/app/mapa'
+      "
+      >{{ administration() ? "Gestión de reportes" : "Mapa de reportes" }}</a
+    ><span>/</span><span>Detalle</span>
+  </nav>
+  @if (report(); as report) {
+    @if (created()) {
+      <p class="notice" role="status">
+        <strong>Tu reporte fue guardado.</strong> Puedes consultarlo en Mis
+        reportes y en el mapa.
+      </p>
+    }
+    <div class="detail-columns">
+      <section>
+        <div class="panel evidence-panel">
+          @if (report.photo && !failedPhotos().has(report.id)) {
+            <img
+              class="evidence-image"
+              [src]="report.photo"
+              alt="Evidencia fotográfica del reporte"
+              (error)="photoFailed(report.id)"
+            />
+          } @else {
+            <div class="media-placeholder">
+              <i class="fa-solid fa-recycle" aria-hidden="true"></i
+              ><span>Sin fotografía disponible</span>
+            </div>
+          }
+          <p class="muted">Evidencia del punto reportado</p>
+        </div>
+        <div class="panel detail-map">
+          <h2>Ubicación del reporte</h2>
+          <app-mapa-reporte [reports]="[report]" [center]="report.coordinates" />
+        </div>
+      </section>
+      <mat-card appearance="outlined" class="panel report-information">
+        <span [class]="'status status-' + report.state">{{
+          labels[report.state]
+        }}</span>
+        <h1>{{ report.title }}</h1>
+        <p class="report-description">{{ report.description }}</p>
+        <dl>
+          <dt>Tipo de residuo</dt>
+          <dd>{{ report.waste }}</dd>
+          <dt>Ubicación</dt>
+          <dd>{{ report.address }} · {{ report.district }}</dd>
+          <dt>Fecha y hora</dt>
+          <dd>{{ report.createdAt | date: "dd/MM/yyyy HH:mm:ss" }}</dd>
+          <dt>Responsable del reporte</dt>
+          <dd>{{ report.authorName }}</dd>
+          <dt>Coordenadas</dt>
+          <dd>{{ report.coordinates[0] }}, {{ report.coordinates[1] }}</dd>
+        </dl>
+        @if (store.isAdmin()) {
+          <app-editor-estado-reporte [report]="report" />
+        }
+
+        <div class="actions">
+          @if (store.isAdmin()) {
+            <a
+              mat-stroked-button
+              routerLink="/app/administracion/reportes"
+              class="btn btn-outline"
+              >Volver a gestión de reportes</a
+            >
+          }
+          <a mat-flat-button routerLink="/app/mapa" class="btn btn-primary"
+            >Volver al mapa</a
+          >
+          @if (report.authorId === store.profile().id) {
+            <a
+              mat-stroked-button
+              routerLink="/app/reportes"
+              class="btn btn-outline"
+              >Mis reportes</a
+            >
+          }
+        </div>
+      </mat-card>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <h1>Reporte no encontrado</h1>
+      <p>Puede haberse eliminado.</p>
+      <a mat-stroked-button routerLink="/app/mapa" class="btn btn-outline"
+        >Volver al mapa</a
+      >
+    </div>
+  }
+</main>

@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+.status-editor {
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid #dce9d8;
+}
+.status-editor h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.status-editor > p {
+  font-size: 13px;
+  color: #687f60;
+}
+.status-editor .current-state {
+  margin: 14px 0;
+}
+.status-editor .actions {
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.status-editor .notice {
+  margin: 16px 0 0;
+}
+.status-editor .eyebrow {
+  font-size: 10px;
+}
+.status-editor form {
+  margin-top: 14px;
+}

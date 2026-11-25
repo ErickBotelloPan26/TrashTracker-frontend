@@ -1,0 +1,151 @@
+:host {
+  display: block;
+}
+.map-page {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: calc(100vh - 145px);
+}
+.map-sidebar {
+  background: white;
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+}
+.map-sidebar h1 {
+  font-size: 1.2rem;
+}
+.map-sidebar > p {
+  font-size: 0.78rem;
+  margin: 5px 0 20px;
+}
+.map-search {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+.map-search .app-field {
+  margin: 0;
+  flex: 1;
+}
+.map-search .btn {
+  height: 44px;
+}
+.location-button {
+  width: 100%;
+  margin-bottom: 15px;
+}
+.map-feedback {
+  font-size: 0.77rem;
+  padding: 10px;
+  background: #f2f8ee;
+  border-radius: 7px;
+  margin-bottom: 14px;
+}
+.map-results {
+  flex: 1;
+  max-height: 380px;
+  overflow: auto;
+}
+.map-results h2 {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.map-result {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #edf3e8;
+  background: white;
+  padding: 15px 0;
+  text-align: left;
+}
+.map-result a {
+  display: block;
+  font-size: 0.75rem;
+  color: #2e9d5d;
+  margin-top: 7px;
+  margin-left: 12px;
+}
+.map-legend-app {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.68rem;
+  padding-top: 20px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.dot.active {
+  background: #e45a64;
+}
+.dot.progress {
+  background: #edae43;
+}
+.dot.resolved {
+  background: #3cb878;
+}
+.map-canvas {
+  position: relative;
+  min-height: 650px;
+}
+.map-canvas app-mapa-reporte {
+  height: 100%;
+}
+.map-create {
+  position: absolute;
+  right: 24px;
+  bottom: 28px;
+  z-index: 1000;
+}
+@media (max-width: 700px) {
+  .map-page {
+    grid-template-columns: 1fr;
+  }
+  .map-canvas {
+    min-height: 440px;
+    height: 55vh;
+    order: -1;
+  }
+  .map-results {
+    max-height: 300px;
+  }
+}
+
+.map-result-center.mat-mdc-button-base {
+  --mat-button-text-container-shape: 7px;
+  border-radius: 7px;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 44px;
+  padding: 10px 12px;
+  white-space: normal;
+  text-align: left;
+  border: 0;
+  background: transparent;
+}
+.map-result-content {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.map-result-content .status {
+  justify-self: start;
+}
+.map-result-content strong {
+  margin: 0;
+  font-size: 0.82rem;
+}
+.map-result-content > span:last-child {
+  font-size: 0.72rem;
+  color: #799075;
+}

@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+.delete-link {
+  border: 0;
+  background: none;
+  color: #b63243;
+  padding: 8px;
+  font-size: 0.8rem;
+}
+.app-table td:first-child {
+  min-width: 220px;
+}
+.app-table p {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
