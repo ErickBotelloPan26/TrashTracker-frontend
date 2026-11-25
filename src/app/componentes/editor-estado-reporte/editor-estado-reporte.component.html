@@ -1,0 +1,55 @@
+@if (store.isAdmin()) {
+  <section class="status-editor" aria-labelledby="report-status-title">
+    <span class="eyebrow">Administración</span>
+    <h2 id="report-status-title">Gestionar estado del reporte</h2>
+    <p>Revisa la evidencia antes de guardar el nuevo estado.</p>
+    <p class="current-state">
+      Estado actual: <strong>{{ labels[report.state] }}</strong>
+    </p>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="app-field"
+        ><mat-label>Nuevo estado</mat-label
+        ><mat-select id="report-admin-status" formControlName="state">
+          <mat-option value="active">Activo</mat-option>
+          <mat-option value="progress">En proceso</mat-option>
+          <mat-option value="resolved">Resuelto</mat-option>
+        </mat-select></mat-form-field
+      >
+      <div class="actions">
+        <button
+          mat-flat-button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="
+            saving() ||
+            form.invalid ||
+            form.controls['state'].value === report.state
+          "
+        >
+          {{ saving() ? "Guardando…" : "Guardar estado" }}
+        </button>
+        @if (report.state !== "resolved") {
+          <button
+            mat-stroked-button
+            class="btn btn-outline"
+            type="button"
+            (click)="resolve()"
+            [disabled]="saving()"
+          >
+            <i class="fa-solid fa-check" aria-hidden="true"></i>Marcar como
+            resuelto
+          </button>
+        }
+      </div>
+    </form>
+    @if (notice()) {
+      <p class="notice" role="status">{{ notice() }}</p>
+    }
+    @if (error()) {
+      <p class="notice notice-error" role="alert">{{ error() }}</p>
+    }
+  </section>
+}
