@@ -1,0 +1,51 @@
+<main class="app-content">
+  <div class="page-heading">
+    <div>
+      <h1>Mis logros ambientales</h1>
+      <p>Cada paso que das deja una huella positiva en tu comunidad.</p>
+    </div>
+    <div class="actions">
+      <button mat-stroked-button type="button" (click)="refresh()" [disabled]="refreshing()">{{ refreshing() ? "Actualizando…" : "Actualizar logros" }}</button>
+      <a mat-stroked-button routerLink="/app/recompensas" class="btn btn-outline">Mis EcoPuntos</a>
+    </div>
+  </div>
+  @if (store.achievementNotice()) { <p role="status" class="notice">{{ store.achievementNotice() }}</p> }
+  @if (store.achievementsSyncError()) { <p role="alert" class="notice notice-error">{{ store.achievementsSyncError() }}</p> }
+  <mat-button-toggle-group
+    [value]="filter()"
+    (change)="filter.set($event.value)"
+    aria-label="Filtrar logros"
+    class="category-filter"
+    ><mat-button-toggle value="all">Todos</mat-button-toggle
+    ><mat-button-toggle value="unlocked">Desbloqueados</mat-button-toggle
+    ><mat-button-toggle value="locked"
+      >Por desbloquear</mat-button-toggle
+    ></mat-button-toggle-group
+  >
+  <div class="achievement-grid">
+    @for (achievement of filtered(); track achievement.id) {
+      <mat-card
+        appearance="outlined"
+        class="achievement-card"
+        [class.locked]="!achievement.unlocked"
+      >
+        <span class="medal"
+          ><i [class]="'fa-solid fa-' + achievement.icon" aria-hidden="true"></i
+        ></span>
+        <h2>{{ achievement.title }}</h2>
+        <p>{{ achievement.description }}</p>
+        <span class="achievement-state"
+          ><i
+            [class]="
+              achievement.unlocked
+                ? 'fa-solid fa-circle-check'
+                : 'fa-solid fa-lock'
+            "
+            aria-hidden="true"
+          ></i
+          >{{ achievement.unlocked ? "Desbloqueado" : "Por desbloquear" }}</span
+        >
+      </mat-card>
+    }
+  </div>
+</main>
